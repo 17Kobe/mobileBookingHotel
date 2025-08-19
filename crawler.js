@@ -11,7 +11,7 @@ class HotelBookingCrawler {
         this.config = null;
         this.configPath = path.join(__dirname, 'config.json');
         // GitHub Gist 設定 - 請在環境變數或這裡設定您的 Gist raw URL
-        this.gistUrl = process.env.GIST_URL || 'https://gist.githubusercontent.com/17Kobe/fae5d61a5c205688abe8ca9a72a1f733/raw/04a2c0917d7856818ce9208d9acb1c8c9388c002/booking.json';
+        this.gistUrl = process.env.GIST_URL || 'https://gist.githubusercontent.com/17Kobe/fae5d61a5c205688abe8ca9a72a1f733/raw/booking.json';
         this.lastSmsCode = '';
         this.smsMonitorInterval = null;
     }
