@@ -1,0 +1,51 @@
+name: Hotel Booking Crawler
+
+on:
+  # schedule:
+  #   # 每天台北時間 7:30 執行 (UTC 23:30)
+  #   - cron: '30 23 * * *'
+  workflow_dispatch: # 允許手動觸發
+
+jobs:
+  crawl:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Install Chrome
+      run: |
+        wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+        sudo sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list'
+        sudo apt-get update
+        sudo apt-get install -y google-chrome-stable
+
+    - name: Run crawler
+      env:
+        NODE_ENV: production
+        CHROME_PATH: /usr/bin/google-chrome
+        GIST_URL: ${{ secrets.GIST_URL }}
+      run: |
+        timeout 1800 npm start || echo "Crawler finished or timed out"
+
+    - name: Commit and push changes
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add -A
+        git diff --staged --quiet || git commit -m "Update config after crawler run $(date)"
+        git push
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

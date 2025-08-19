@@ -1,0 +1,20 @@
+{
+  "name": "mobile-booking-hotel",
+  "version": "1.0.0",
+  "description": "自動爬蟲訂房系統",
+  "main": "index.js",
+  "scripts": {
+    "start": "node crawler.js",
+    "test": "node test.js",
+    "test-gist": "node test-gist.js",
+    "config": "echo \"請先複製 config.example.json 為 config.json 並填入您的資訊\""
+  },
+  "keywords": ["crawler", "booking", "automation"],
+  "author": "17Kobe",
+  "license": "ISC",
+  "dependencies": {
+    "puppeteer": "^22.0.0",
+    "chrome-paths": "^1.0.1",
+    "axios": "^1.6.0"
+  }
+}
