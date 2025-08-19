@@ -39,13 +39,3 @@ jobs:
         GIST_URL: ${{ secrets.GIST_URL }}
       run: |
         timeout 1800 npm start || echo "Crawler finished or timed out"
-
-    - name: Commit and push changes
-      run: |
-        git config --local user.email "action@github.com"
-        git config --local user.name "GitHub Action"
-        git add -A
-        git diff --staged --quiet || git commit -m "Update config after crawler run $(date)"
-        git push
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
