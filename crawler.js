@@ -54,25 +54,29 @@ class HotelBookingCrawler {
     startSmsMonitoring(callback) {
         console.log('🔍 開始每5秒監控 GitHub Gist 的簡訊驗證碼變化...');
         console.log('Gist URL:', this.gistUrl);
-        
+
         this.smsMonitorInterval = setInterval(async () => {
             try {
-                const response = await axios.get(this.gistUrl);
+                const urlWithRandom = `${this.gistUrl}?_=${Date.now()}`;
+                const response = await axios.get(urlWithRandom, {
+                    headers: { 'Cache-Control': 'no-cache' }
+                });
                 const newConfig = response.data;
                 const currentSmsCode = newConfig.sms_code || '';
-                
+                console.log(`[Gist監控] 目前 sms_code: "${currentSmsCode}"，lastSmsCode: "${this.lastSmsCode}"`);
+
                 // 只有當 sms_code 從空值變為有值，或從一個值變為另一個值時才觸發回調
                 if (currentSmsCode !== this.lastSmsCode && currentSmsCode.trim() !== '') {
                     console.log('🎯 偵測到 Gist 中的簡訊驗證碼變化!');
                     console.log('舊驗證碼:', this.lastSmsCode || '(空)');
                     console.log('新驗證碼:', currentSmsCode);
-                    
+
                     this.lastSmsCode = currentSmsCode;
                     this.config = newConfig; // 更新完整設定
-                    
+
                     // 停止監控
                     this.stopSmsMonitoring();
-                    
+
                     callback(currentSmsCode);
                 } else if (currentSmsCode !== this.lastSmsCode) {
                     console.log('⚠️  Gist 中的 sms_code 已變更但不符合觸發條件');
